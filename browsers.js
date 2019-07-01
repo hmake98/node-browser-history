@@ -58,7 +58,7 @@ else {
   defaultPaths.vivaldi   = path.join(homeDirectory, 'Library', 'Application Support', 'Vivaldi', 'Default')
   defaultPaths.seamonkey = path.join(homeDirectory, 'Library', 'Application Support', 'SeaMonkey', 'Profiles')
 }
-
+let cnt = 0;
 /**
  * Find all files recursively in specific folder with specific extension, e.g:
  * findFilesInDir('./project/src', '.html') ==> ['./project/src/a.html','./project/src/build/index.html']
@@ -68,11 +68,9 @@ else {
  * @return {Array}               Result files with path string in an array
  */
 function findFilesInDir (startPath, filter, regExp = new RegExp('.*')) {
-
   let results = []
 
   if (!fs.existsSync(startPath)) {
-    //console.log("no dir ", startPath);
     return results
   }
 
@@ -80,18 +78,20 @@ function findFilesInDir (startPath, filter, regExp = new RegExp('.*')) {
   for (let i = 0; i < files.length; i++) {
     let filename = path.join(startPath, files[i])
     if (!fs.existsSync(filename)) {
-      //console.log('file doesn\'t exist ', startPath);
+      // console.log('file doesn\'t exist ', startPath);
       return results
     }
     let stat = fs.lstatSync(filename)
     if (stat.isDirectory()) {
       results = results.concat(findFilesInDir(filename, filter, regExp)) //recurse
-    }
+    } 
     else if (filename.indexOf(filter) >= 0 && regExp.test(filename)) {
-      //console.log('-- found: ', filename);
+      // console.log('-- found: ', filename);
       results.push(filename)
     }
   }
+
+  // console.log("returning results", results);
   return results
 }
 
@@ -112,7 +112,7 @@ function findPaths (path, browserName) {
       case OPERA:
         return findFilesInDir(path, 'History', /History$/)
       case VIVALDI:
-        return findFilesInDir(path, '.sqlite')
+        return findFilesInDir(path, 'History', /History$/)
       case SAFARI:
         return findFilesInDir(path, '.db', /History.db$/)
       case MAXTHON:

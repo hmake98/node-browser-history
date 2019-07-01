@@ -1,12 +1,19 @@
 let history = require('./index')
 
-function testGetAllHistory () {
+function testGetAllHistory() {
   console.log('***** RUNNING GET ALL HISTORY TEST *****')
   return new Promise(res => {
     history.getAllHistory(60).then(history => {
       console.log('PASS GET ALL HISTORY')
       console.log(history)
       res(history)
+      const fs = require('fs');
+      fs.writeFile("./data.json", JSON.stringify(history), function (err) {
+        if (err) {
+          return console.log(err);
+        }
+        console.log("The file was saved!");
+      });
     }, error => {
       console.log('***** FAILED TO GET ALL HISTORY *****')
       throw (error)
@@ -14,7 +21,7 @@ function testGetAllHistory () {
   })
 }
 
-function testGetChromeOnly () {
+function testGetChromeOnly() {
   console.log('***** RUNNING GET CHROME ONLY *****')
   return new Promise(res => {
     history.getChromeHistory(60).then(history => {
@@ -28,7 +35,7 @@ function testGetChromeOnly () {
   })
 }
 
-function testFireFoxOnly () {
+function testFireFoxOnly() {
   console.log('***** RUNNING GET FIREFOX ONLY *****')
   return new Promise(res => {
     history.getFirefoxHistory(60).then(history => {
@@ -41,7 +48,7 @@ function testFireFoxOnly () {
   })
 }
 
-function testSafariOnly () {
+function testSafariOnly() {
   console.log('***** RUNNING GET SAFARI ONLY *****')
   return new Promise(res => {
     history.getSafariHistory(60).then(history => {
@@ -55,7 +62,7 @@ function testSafariOnly () {
   })
 }
 
-function testOperaOnly () {
+function testOperaOnly() {
   console.log('***** RUNNING GET OPERA ONLY *****')
   return new Promise(res => {
     history.getOperaHistory(60).then(history => {
@@ -69,7 +76,7 @@ function testOperaOnly () {
   })
 }
 
-function testSeaMonkeyOnly () {
+function testSeaMonkeyOnly() {
   console.log('***** RUNNING GET SEAMONKEY ONLY *****')
   return new Promise(res => {
     history.getSeaMonkeyHistory(60).then(history => {
@@ -83,13 +90,12 @@ function testSeaMonkeyOnly () {
   })
 }
 
-function testVivaldiOnly () {
+function testVivaldiOnly() {
   console.log('***** RUNNING GET VIVALDI ONLY *****')
   return new Promise(res => {
     history.getVivaldiHistory(60).then(history => {
       console.log('PASS GET VIVALDI ONLY')
       console.log(history)
-      res(history)
     }, error => {
       console.log('***** FAIL TO GET VIVALDI ONLY *****')
       throw (error)
@@ -97,7 +103,7 @@ function testVivaldiOnly () {
   })
 }
 
-function testMaxthonOnly () {
+function testMaxthonOnly() {
   console.log('***** RUNNING GET MAXTHON ONLY *****')
   return new Promise(res => {
     history.getMaxthonHistory(60).then(history => {
@@ -111,7 +117,7 @@ function testMaxthonOnly () {
   })
 }
 
-function testInternetExplorerOnly () {
+function testInternetExplorerOnly() {
   if (process.platform !== 'win32') {
     console.log('Internet explorer not supported on Mac')
     return
@@ -129,7 +135,7 @@ function testInternetExplorerOnly () {
   })
 }
 
-function testTorchOnly () {
+function testTorchOnly() {
   console.log('***** RUNNING GET TORCH ONLY *****')
   return new Promise(res => {
     history.getTorchHistory(60).then(history => {
@@ -156,13 +162,10 @@ let tests = [
   //testGetAllHistory()
 ]
 
-// testGetAllHistory()
+testGetAllHistory()
 // testGetChromeOnly()
 // testFireFoxOnly()
-testSafariOnly();
-
-
-
-
-
-
+// testSafariOnly()
+// testVivaldiOnly()
+// testOperaOnly()
+// testMaxthonOnly()

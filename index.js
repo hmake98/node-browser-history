@@ -46,10 +46,8 @@ async function getBrowserHistory(paths = [], browserName, historyTimeLength) {
       return await getChromeBasedBrowserRecords(paths, browserName, historyTimeLength)
     case browsers.MAXTHON:
       return await getMaxthonBasedBrowserRecords(paths, browserName, historyTimeLength)
-
     case browsers.SAFARI:
       return await getSafariBasedBrowserRecords(paths, browserName, historyTimeLength)
-
     case browsers.INTERNETEXPLORER:
       //Only do this on Windows we have to do t his here because the DLL manages this
       if (process.platform !== "win32") {
@@ -103,6 +101,7 @@ async function getChromeBasedBrowserRecords(paths, browserName, historyTimeLengt
         let browserHistory = []
         if (paths.hasOwnProperty(p) && paths[p] !== "") {
           let newDbPath = path.join(process.env.TMP ? process.env.TMP : process.env.TMPDIR, uuidV4() + ".sqlite")
+          console.log(newDbPath)
           //Assuming the sqlite file is locked so lets make a copy of it
           let readStream = fs.createReadStream(paths[p])
           let writeStream = fs.createWriteStream(newDbPath)
@@ -398,22 +397,15 @@ async function getChromeHistory(historyTimeLength = 5) {
  * @returns {Promise<array>}
  */
 async function getOperaHistory(historyTimeLength = 5) {
-  let getPaths = [
-    browsers.findPaths(browsers.defaultPaths.opera, browsers.OPERA).then(foundPaths => {
-      browsers.browserDbLocations.opera = foundPaths
-    })
-  ]
-  Promise.all(getPaths).then(() => {
-    let getRecords = [
-      getBrowserHistory(browsers.browserDbLocations.opera, browsers.OPERA, historyTimeLength)
-    ]
-    Promise.all(getRecords).then((records) => {
-      return records
-    }, error => {
-      throw error
-    })
-  }, error => {
-    throw error
+  return new Promise((res, rej) => {
+    browsers.browserDbLocations.opera = browsers.findPaths(browsers.defaultPaths.opera, browsers.OPERA)
+    getBrowserHistory(browsers.browserDbLocations.opera, browsers.OPERA, historyTimeLength).then(data => {
+      let d = [];
+      data.forEach(dataNew => {
+        d = [...d, ...dataNew]
+      });
+      res(d);
+    });
   })
 }
 
@@ -466,22 +458,16 @@ async function getSafariHistory(historyTimeLength = 5) {
  * @returns {Promise<array>}
  */
 async function getMaxthonHistory(historyTimeLength = 5) {
-  let getPaths = [
-    browsers.findPaths(browsers.defaultPaths.maxthon, browsers.MAXTHON).then(foundPaths => {
-      browsers.browserDbLocations.maxthon = foundPaths
-    })
-  ]
-  Promise.all(getPaths).then(() => {
-    let getRecords = [
-      getBrowserHistory(browsers.browserDbLocations.maxthon, browsers.MAXTHON, historyTimeLength)
-    ]
-    Promise.all(getRecords).then((records) => {
-      return records
-    }, error => {
-      throw error
-    })
-  }, error => {
-    throw error
+  return new Promise((res, rej) => {
+    browsers.browserDbLocations.maxthon = browsers.findPaths(browsers.defaultPaths.maxthon, browsers.MAXTHON)
+    getBrowserHistory(browsers.browserDbLocations.maxthon, browsers.MAXTHON, historyTimeLength).then(data => {
+      console.log(data)
+      // let d = [];
+      // data.forEach(dataNew => {
+      //   d = [...d, ...dataNew]
+      // });
+      res(data);
+    });
   })
 }
 
@@ -491,22 +477,15 @@ async function getMaxthonHistory(historyTimeLength = 5) {
  * @returns {Promise<array>}
  */
 async function getVivaldiHistory(historyTimeLength = 5) {
-  let getPaths = [
-    browsers.findPaths(browsers.defaultPaths.vivaldi, browsers.VIVALDI).then(foundPaths => {
-      browsers.browserDbLocations.vivaldi = foundPaths
-    })
-  ]
-  Promise.all(getPaths).then(() => {
-    let getRecords = [
-      getBrowserHistory(browsers.browserDbLocations.vivaldi, browsers.VIVALDI, historyTimeLength)
-    ]
-    Promise.all(getRecords).then((records) => {
-      return records
-    }, error => {
-      throw error
-    })
-  }, error => {
-    throw error
+  return new Promise((res, rej) => {
+    browsers.browserDbLocations.vivaldi = browsers.findPaths(browsers.defaultPaths.vivaldi, browsers.VIVALDI)
+    getBrowserHistory(browsers.browserDbLocations.vivaldi, browsers.VIVALDI, historyTimeLength).then(data => {
+      let d = [];
+      data.forEach(dataNew => {
+        d = [...d, ...dataNew]
+      });
+      res(d);
+    });
   })
 }
 
