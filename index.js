@@ -4,23 +4,30 @@ const path = require("path"),
   uuidV4 = require("uuid/v4"),
   moment = require("moment")
 
-let browserHistoryDllPath = "",
+let edge = null,
+  browserHistoryDllPath = "",
   getInternetExplorerHistory = null,
   browsers = require("./browsers")
 
 if (process.platform === "win32") {
-
+  edge = process.versions.electron ? require("electron-edge-js") : require("edge-js")
   if (fs.existsSync(
-      path.resolve(path.join(__dirname, "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll")))) {
+    path.resolve(path.join(__dirname, "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll")))) {
     browserHistoryDllPath = path.join(
       __dirname, "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll")
   } else if (fs.existsSync(
-      path.join(__dirname, "..", "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll"))) {
+    path.join(__dirname, "..", "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll"))) {
     browserHistoryDllPath = path.join(
       __dirname, "..", "..", "..", "src", "renderer", "assets", "dlls", "IEHistoryFetcher.dll")
   } else {
     browserHistoryDllPath = path.resolve(path.join(__dirname, "dlls", "IEHistoryFetcher.dll"))
   }
+
+  getInternetExplorerHistory = edge.func({
+    assemblyFile: browserHistoryDllPath,
+    typeName: "BrowserHistory.Fetcher",
+    methodName: "getInternetExplorer"
+  })
 
 }
 
@@ -60,7 +67,7 @@ async function getBrowserHistory(paths = [], browserName, historyTimeLength) {
   }
 }
 
-function getInternetExplorerBasedBrowserRecords(historyTimeLength) {
+async function getInternetExplorerBasedBrowserRecords(historyTimeLength) {
   let internetExplorerHistory = []
   return new Promise((resolve, reject) => {
     getInternetExplorerHistory(null, (error, s) => {
@@ -495,13 +502,13 @@ async function getVivaldiHistory(historyTimeLength = 5) {
  * @returns {Promise<array>}
  */
 async function getIEHistory(historyTimeLength = 5) {
-  let getRecords = [
-    getBrowserHistory([], browsers.INTERNETEXPLORER, historyTimeLength)
-  ]
-  Promise.all(getRecords).then((records) => {
-    return records
-  }, error => {
-    throw error
+  return new Promise((res, rej) => {
+    let getRecords = [
+      getBrowserHistory([], browsers.INTERNETEXPLORER, historyTimeLength)
+    ]
+    Promise.all(getRecords).then((records) => {
+      res(records)
+    })
   })
 }
 

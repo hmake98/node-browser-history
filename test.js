@@ -126,8 +126,8 @@ function testInternetExplorerOnly() {
   return new Promise(res => {
     history.getIEHistory(60).then(history => {
       console.log('PASS GET INTERNET EXPLORER ONLY')
-      console.log(history)
       res(history)
+      console.log(history)
     }, error => {
       console.log('***** FAIL TO GET INTERNET EXPLORER ONLY *****')
       throw (error)
@@ -162,7 +162,8 @@ let tests = [
   //testGetAllHistory()
 ]
 
-testGetAllHistory()
+testInternetExplorerOnly()
+// testGetAllHistory()
 // testGetChromeOnly()
 // testFireFoxOnly()
 // testSafariOnly()
